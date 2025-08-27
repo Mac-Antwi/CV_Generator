@@ -1,0 +1,72 @@
+CREATE DATABASE cv_generator;
+USE cv_generator;
+
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE  cvs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    full_name VARCHAR(100) NOT NULL,
+    professional_title VARCHAR(100),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    location VARCHAR(100),
+    professional_summary TEXT,
+    skills TEXT,
+    experiences TEXT,
+    education TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE experiences (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cv_id INT NOT NULL,
+    job_title VARCHAR(100) NOT NULL,
+    employer VARCHAR(100) NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    current_job BOOLEAN DEFAULT FALSE,
+    description TEXT,
+    FOREIGN KEY (cv_id) REFERENCES cvs(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE education (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cv_id INT NOT NULL,
+    degree VARCHAR(100) NOT NULL,
+    institution VARCHAR(100) NOT NULL,
+    graduation_date DATE,
+    description TEXT,
+    FOREIGN KEY (cv_id) REFERENCES cvs(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE templates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description TEXT,
+    thumbnail_path VARCHAR(255)
+);
+
+
+CREATE TABLE cv_templates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cv_id INT NOT NULL,
+    template_id INT NOT NULL,
+    FOREIGN KEY (cv_id) REFERENCES cvs(id) ON DELETE CASCADE,
+    FOREIGN KEY (template_id) REFERENCES templates(id)
+);
